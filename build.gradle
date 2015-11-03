@@ -1,0 +1,100 @@
+apply plugin: 'java'
+apply plugin: 'eclipse'
+apply plugin: 'maven'
+apply plugin: 'signing'
+
+version = '1.0.0-SNAPSHOT'
+group = 'de.undercouch'
+sourceCompatibility = '1.6'
+targetCompatibility = '1.6'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4.12'
+}
+
+jar {
+    // include license into jar
+    from 'LICENSE.txt'
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '2.8'
+}
+
+// package javadoc into a jar file
+task packageJavadoc(type: Jar, dependsOn: 'javadoc') {
+    from javadoc.destinationDir
+    classifier = 'javadoc'
+}
+
+// package source into a jar file
+task packageSources(type: Jar) {
+    from sourceSets.main.allSource
+    classifier = 'sources'
+}
+
+// define artifacts for upload
+artifacts {
+    archives jar
+    archives packageJavadoc
+    archives packageSources
+}
+
+// sign all artifacts
+signing {
+    required { gradle.taskGraph.hasTask(uploadArchives) }
+    sign configurations.archives
+}
+
+// remove test dependencies from configuration-to-scope mapping
+// this also removes them from the maven pom file
+conf2ScopeMappings.mappings.remove(configurations.testCompile)
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            // sign artifacts before upload
+            beforeDeployment { MavenDeployment deployment -> signing.signPom(deployment) }
+            
+            // upload to sonatype OSS
+            repository(url: "https://oss.sonatype.org/service/local/staging/deploy/maven2") {
+                authentication(userName: this.hasProperty('sonatypeUsername') ? sonatypeUsername : '',
+                    password: this.hasProperty('sonatypePassword') ? sonatypePassword : '')
+            }
+            
+            // pom file details
+            pom.project {
+               name 'underline'
+               packaging 'jar'
+               description 'A Git-like command-line parser with no strings attached'
+               url 'http://www.michel-kraemer.com'
+ 
+               scm {
+                   url 'scm:git:git://github.com/michel-kraemer/underline.git'
+                   connection 'scm:git:git://github.com/michel-kraemer/underline.git'
+                   developerConnection 'scm:git:git://github.com/michel-kraemer/underline.git'
+               }
+ 
+               licenses {
+                   license {
+                       name 'The Apache Software License, Version 2.0'
+                       url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                       distribution 'repo'
+                   }
+               }
+ 
+               developers {
+                   developer {
+                       id 'michel-kraemer'
+                       name 'Michel Kraemer'
+                       email 'michel@undercouch.de'
+                   }
+               }
+           }
+        }
+    }
+}

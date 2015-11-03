@@ -1,0 +1,11 @@
+.externalToolBuilders/
+.gradle/
+.settings/
+bin/
+build/
+target/
+reports/
+src-gen/
+.classpath
+.project
+gradle.properties
