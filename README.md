@@ -98,6 +98,8 @@ This is a very complex example that demonstrates how flexible _underline_ is.
 Building
 --------
 
+[![Build Status](https://travis-ci.org/michel-kraemer/underline.svg)](https://travis-ci.org/michel-kraemer/underline)
+
 Execute the following command to compile the library and to run the
 unit tests:
 
