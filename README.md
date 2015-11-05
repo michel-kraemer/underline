@@ -17,7 +17,24 @@ need more flexibility then _underline_ may be the right tool for you.
 Download
 --------
 
-Download is not available yet. Please refer to the `Building` section below.
+If your application's build is based on **Maven** add the following
+lines to your `pom.xml`:
+
+```xml
+<dependency>
+    <groupId>de.undercouch</groupId>
+    <artifactId>underline</artifactId>
+    <version>1.0.0</version>
+</dependency>
+```
+
+If you use **Gradle** add the following to your `build.gradle`:
+
+```gradle
+dependencies {
+    compile 'de.undercouch:underline:1.0.0'
+}
+```
 
 Usage
 -----
